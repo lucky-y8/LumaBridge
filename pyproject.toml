@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lumabridge"
+version = "1.0.0"
+description = "完全离线的动态二维码文件传输桌面工具"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "PySide6>=6.7,<7",
+  "qrcode[pil]>=7.4,<9",
+  "opencv-python>=4.9,<5",
+  "zxing-cpp>=2.2,<3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9", "pyinstaller>=6,<7"]
+
+[project.gui-scripts]
+lumabridge = "optical_transfer.app:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+optical_transfer = ["assets/*.png", "assets/*.ico"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
