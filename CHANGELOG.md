@@ -7,12 +7,14 @@
 - Moved scan percentages beside the progress bars so the filled track cannot cover them.
 - Added **Restore Defaults** to both Send File and Recover File settings.
 - Rebuilt the Windows executable with the embedded multi-size fox icon and a stable `LumaBridge.exe` filename.
+- Added Windows application identity and version resources so Explorer, shortcuts, and the taskbar consistently use the fox icon.
 
 ### 简体中文
 
 - 将扫描百分比独立显示在进度条右侧，避免填充条覆盖进度文字。
 - 在“发送文件”和“恢复文件”页面都增加“恢复默认设置”。
 - 使用稳定的 `LumaBridge.exe` 文件名和内嵌多尺寸小狐狸图标重新构建 Windows 程序。
+- 增加 Windows 应用身份与版本资源，使资源管理器、快捷方式和任务栏稳定显示小狐狸图标。
 
 ## 1.0.0 — 2026-08-19
 

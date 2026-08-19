@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import sys
+import ctypes
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
@@ -26,6 +27,10 @@ def configure_logging() -> Path:
 
 
 def main() -> int:
+    if sys.platform == "win32":
+        # Give Explorer, the taskbar, and shortcuts a stable application identity.
+        # 为资源管理器、任务栏和快捷方式设置稳定的应用身份。
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("LumaBridge.LumaBridge")
     QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     app = QApplication(sys.argv); app.setApplicationName("LumaBridge"); app.setOrganizationName("LumaBridge")
     icon_path = Path(__file__).resolve().parent / "assets" / "lumabridge.png"
