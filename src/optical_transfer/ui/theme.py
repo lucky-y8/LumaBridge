@@ -161,9 +161,9 @@ QProgressBar {
     border: none;
     border-radius: 4px;
     text-align: center;
-    color: transparent;
 }
 QProgressBar::chunk { background: #10B981; border-radius: 4px; }
+QLabel#progressPercent { color: #D1D5DB; font-size: 12px; font-weight: 650; }
 QTableWidget {
     background: #111827;
     alternate-background-color: #151E2B;
@@ -254,6 +254,7 @@ QDoubleSpinBox::up-button, QDoubleSpinBox::down-button { background: #F3F4F6; }
 QCheckBox { color: #374151; }
 QProgressBar { background: #E5E7EB; }
 QProgressBar::chunk { background: #10A37F; }
+QLabel#progressPercent { color: #374151; }
 QTableWidget {
     color: #374151; background: #FFFFFF; alternate-background-color: #FAFAFA;
     border-color: #E5E7EB; gridline-color: #F3F4F6;

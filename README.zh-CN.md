@@ -23,7 +23,7 @@ LumaBridge 通过循环显示动态二维码并扫描手机录像，在隔离电
 
 ### Windows 便携版
 
-在完整的 `LumaBridge` 发布目录内运行 `LumaBridge.exe`。不要把 EXE 单独移走，旁边的 `_internal` 目录是运行所必需的。
+在完整的发布目录内运行 `LumaBridge-v1.0.1.exe`。不要把 EXE 单独移走，旁边的 `_internal` 目录是运行所必需的。
 
 软件默认使用 Codex 风格浅色主题；如需深色界面，可点击侧栏底部的“切换深色模式”。
 

@@ -17,7 +17,7 @@ The Codex-style light theme is enabled by default. Use **Switch to Dark Mode** a
 
 ## 2. Before you begin
 
-- On Windows, keep `LumaBridge.exe` and the `_internal` directory together.
+- On Windows, keep `LumaBridge-v1.0.1.exe` and the `_internal` directory together.
 - Ensure the sending monitor can display the entire QR code without scaling or cropping.
 - Ensure the phone has enough free storage for two playback loops.
 - Disable beautification filters and avoid messaging-app recompression.
@@ -37,6 +37,8 @@ The Codex-style light theme is enabled by default. Use **Switch to Dark Mode** a
 6. Keep the three-second countdown enabled when another person operates the phone.
 7. Select two loops or unlimited playback.
 8. Choose **Start Full-screen Playback**.
+
+Choose **Restore Defaults** to return to Standard mode, 700-byte chunks, 3 fps, two loops, and the three-second countdown. The selected source file is retained.
 
 ### Full-screen controls
 
@@ -70,6 +72,8 @@ For reliable recognition:
    - **Current video scan progress** shows how far the reader has moved through the video.
    - **Unique chunk collection progress** shows how much of the original file is available.
 7. Pause, continue, or cancel when required. Collected chunks remain available.
+
+Choose **Restore Defaults** to return the recognition rate to 12 attempts/second. Videos and collected chunks are retained.
 
 A damaged or unsupported video is marked and skipped. A conflicting chunk stops safe recovery and must be investigated.
 

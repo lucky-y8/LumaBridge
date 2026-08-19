@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QApplication, QLabel
 from optical_transfer.models import FileMetadata, Frame
 from optical_transfer.protocol import encode_frame
 from optical_transfer.sender.player import QRPlayerDialog
-from optical_transfer.ui.main_window import MainWindow, SendPage
+from optical_transfer.ui.main_window import MainWindow, RecoverPage, SendPage
 from optical_transfer.ui.theme import APP_STYLESHEET, DARK_STYLESHEET, LIGHT_STYLESHEET
 
 
@@ -53,3 +53,22 @@ def test_brand_logo_is_loaded(app):
     assert mark is not None
     assert mark.pixmap() is not None and not mark.pixmap().isNull()
     window.close()
+
+
+def test_progress_percent_is_separate_from_bar(app):
+    page = RecoverPage()
+    assert not page.video_progress.isTextVisible()
+    assert not page.chunk_progress.isTextVisible()
+    assert page.video_percent.text() == "0%"
+    assert page.chunk_percent.text() == "0%"
+    assert "color: transparent" not in APP_STYLESHEET
+    page.close()
+
+
+def test_send_and_recover_restore_defaults(app):
+    send = SendPage(); send.mode.setCurrentText("自定义"); send.chunk.setValue(930); send.fps.setValue(7.5); send.loops.setCurrentText("无限循环"); send.countdown.setChecked(False)
+    send.reset_defaults()
+    assert send.mode.currentText() == "标准（推荐）" and send.chunk.value() == 700 and send.fps.value() == 3.0
+    assert send.loops.currentText() == "2 次" and send.countdown.isChecked()
+    recover = RecoverPage(); recover.attempts.setValue(27); recover.reset_defaults(); assert recover.attempts.value() == 12
+    send.close(); recover.close()

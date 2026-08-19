@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.1 — 2026-08-19
+
+### English
+
+- Moved scan percentages beside the progress bars so the filled track cannot cover them.
+- Added **Restore Defaults** to both Send File and Recover File settings.
+- Rebuilt the Windows executable with a versioned filename and embedded multi-size fox icon to avoid stale Explorer icon caching.
+
+### 简体中文
+
+- 将扫描百分比独立显示在进度条右侧，避免填充条覆盖进度文字。
+- 在“发送文件”和“恢复文件”页面都增加“恢复默认设置”。
+- 使用带版本号的文件名和内嵌多尺寸小狐狸图标重新构建 Windows EXE，避免资源管理器继续使用旧图标缓存。
+
 ## 1.0.0 — 2026-08-19
 
 ### English

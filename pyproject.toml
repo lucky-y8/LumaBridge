@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lumabridge"
-version = "1.0.0"
+version = "1.0.1"
 description = "完全离线的动态二维码文件传输桌面工具"
 readme = "README.md"
 requires-python = ">=3.11"

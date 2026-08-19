@@ -23,7 +23,7 @@ LumaBridge transfers a file between isolated computers by displaying a looping Q
 
 ### Windows portable build
 
-Open `LumaBridge.exe` inside the complete `LumaBridge` release directory. Keep the `_internal` directory next to the executable.
+Open `LumaBridge-v1.0.1.exe` inside the complete release directory. Keep the `_internal` directory next to the executable.
 
 The application opens in the Codex-style light theme. Use **Switch to Dark Mode** in the sidebar whenever you prefer the dark palette.
 

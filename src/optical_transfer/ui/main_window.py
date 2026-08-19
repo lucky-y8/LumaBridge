@@ -116,7 +116,8 @@ class SendPage(QWidget):
         self.fps = QDoubleSpinBox(minimum=0.5, maximum=8, value=3, singleStep=0.5, suffix=" fps")
         self.loops = QComboBox(); self.loops.addItems(["无限循环", "1 次", "2 次", "3 次"]); self.loops.setCurrentText("2 次")
         self.countdown = QCheckBox("播放前 3 秒倒计时"); self.countdown.setChecked(True)
-        form.addRow("模式", self.mode); form.addRow("分片大小", self.chunk); form.addRow("播放速度", self.fps); form.addRow("循环次数", self.loops); form.addRow("", self.countdown)
+        self.reset_settings = QPushButton("恢复默认设置"); self.reset_settings.setObjectName("resetButton"); self.reset_settings.clicked.connect(self.reset_defaults)
+        form.addRow("模式", self.mode); form.addRow("分片大小", self.chunk); form.addRow("播放速度", self.fps); form.addRow("循环次数", self.loops); form.addRow("", self.countdown); form.addRow("", self.reset_settings)
         self.mode.currentTextChanged.connect(self.apply_mode); self.chunk.valueChanged.connect(self.refresh); self.fps.valueChanged.connect(self.refresh)
         self.analysis_timer = QTimer(self, singleShot=True, interval=200); self.analysis_timer.timeout.connect(self._start_analysis)
         root.addWidget(settings)
@@ -124,6 +125,10 @@ class SendPage(QWidget):
         self.info.setObjectName("infoPanel"); self.info.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse); root.addWidget(self.info)
         self.start_btn = QPushButton("开始全屏播放  →"); self.start_btn.setObjectName("primaryButton"); self.start_btn.setEnabled(False); self.start_btn.clicked.connect(self.play)
         root.addWidget(self.start_btn); root.addStretch()
+
+    def reset_defaults(self) -> None:
+        self.mode.setCurrentText("标准（推荐）"); self.chunk.setValue(700); self.fps.setValue(3.0)
+        self.loops.setCurrentText("2 次"); self.countdown.setChecked(True); self.refresh()
 
     def apply_mode(self, name: str) -> None:
         if name in self.MODES:
@@ -215,18 +220,27 @@ class RecoverPage(QWidget):
         self.table.setAlternatingRowColors(True); self.table.verticalHeader().setVisible(False); self.table.verticalHeader().setDefaultSectionSize(39)
         self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows); self.table.horizontalHeader().setStretchLastSection(True); queue_box.addWidget(self.table); root.addWidget(queue_card, 1)
         controls = QHBoxLayout(); self.attempts = QSpinBox(minimum=5, maximum=30, value=12, suffix=" 次/秒")
+        self.reset_settings = QPushButton("恢复默认设置"); self.reset_settings.setObjectName("resetButton"); self.reset_settings.clicked.connect(self.reset_defaults)
         self.start = QPushButton("开始扫描"); self.pause = QPushButton("暂停"); self.cancel = QPushButton("取消")
         self.start.setObjectName("primaryButton"); self.cancel.setObjectName("dangerButton")
         self.pause.setEnabled(False); self.cancel.setEnabled(False); self.start.clicked.connect(self.start_scan); self.pause.clicked.connect(self.toggle_pause); self.cancel.clicked.connect(self.cancel_scan)
-        controls.addWidget(QLabel("识别频率")); controls.addWidget(self.attempts); controls.addStretch(); controls.addWidget(self.start); controls.addWidget(self.pause); controls.addWidget(self.cancel); root.addLayout(controls)
+        controls.addWidget(QLabel("识别频率")); controls.addWidget(self.attempts); controls.addWidget(self.reset_settings); controls.addStretch(); controls.addWidget(self.start); controls.addWidget(self.pause); controls.addWidget(self.cancel); root.addLayout(controls)
         progress_card = QFrame(); progress_card.setObjectName("card"); progress_box = QVBoxLayout(progress_card); progress_box.setContentsMargins(16, 11, 16, 12); progress_box.setSpacing(6)
-        self.video_progress = QProgressBar(); self.chunk_progress = QProgressBar(); video_label = QLabel("当前视频扫描进度"); video_label.setObjectName("muted"); chunk_label = QLabel("唯一分片收集进度"); chunk_label.setObjectName("muted")
-        progress_box.addWidget(video_label); progress_box.addWidget(self.video_progress); progress_box.addSpacing(3); progress_box.addWidget(chunk_label); progress_box.addWidget(self.chunk_progress); root.addWidget(progress_card)
+        self.video_progress = QProgressBar(); self.chunk_progress = QProgressBar(); self.video_progress.setTextVisible(False); self.chunk_progress.setTextVisible(False)
+        self.video_percent = QLabel("0%"); self.chunk_percent = QLabel("0%"); self.video_percent.setObjectName("progressPercent"); self.chunk_percent.setObjectName("progressPercent")
+        for percent in (self.video_percent, self.chunk_percent): percent.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter); percent.setFixedWidth(48)
+        video_label = QLabel("当前视频扫描进度"); video_label.setObjectName("muted"); chunk_label = QLabel("唯一分片收集进度"); chunk_label.setObjectName("muted")
+        video_row = QHBoxLayout(); video_row.setSpacing(10); video_row.addWidget(self.video_progress, 1); video_row.addWidget(self.video_percent)
+        chunk_row = QHBoxLayout(); chunk_row.setSpacing(10); chunk_row.addWidget(self.chunk_progress, 1); chunk_row.addWidget(self.chunk_percent)
+        progress_box.addWidget(video_label); progress_box.addLayout(video_row); progress_box.addSpacing(3); progress_box.addWidget(chunk_label); progress_box.addLayout(chunk_row); root.addWidget(progress_card)
         self.status = QLabel("等待添加录像"); self.status.setObjectName("infoPanel"); self.status.setWordWrap(True); self.status.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse); root.addWidget(self.status)
         out = QHBoxLayout(); self.restore = QPushButton("恢复并保存文件…"); self.restore.setEnabled(False); self.restore.clicked.connect(self.restore_file)
         self.restore.setObjectName("primaryButton")
         self.copy_missing = QPushButton("复制缺失编号"); self.copy_missing.clicked.connect(self.copy_missing_numbers)
         out.addWidget(self.restore); out.addWidget(self.copy_missing); out.addStretch(); root.addLayout(out)
+
+    def reset_defaults(self) -> None:
+        if self.thread is None: self.attempts.setValue(12)
 
     def add_dialog(self) -> None:
         paths, _ = QFileDialog.getOpenFileNames(self, "添加手机录像", filter="视频 (*.mp4 *.mov *.avi *.mkv *.m4v *.webm);;所有文件 (*)")
@@ -267,14 +281,15 @@ class RecoverPage(QWidget):
         self.worker.moveToThread(self.thread); self.thread.started.connect(self.worker.run); self.worker.progress.connect(self.on_progress)
         self.worker.video_done.connect(self.on_video_done); self.worker.finished.connect(self.on_finished); self.worker.failed.connect(self.on_failed)
         self.worker.finished.connect(self.thread.quit); self.worker.failed.connect(self.thread.quit); self.thread.finished.connect(self.cleanup_thread)
-        self.start.setEnabled(False); self.pause.setEnabled(True); self.cancel.setEnabled(True); self.attempts.setEnabled(False)
+        self.video_progress.setValue(0); self.video_percent.setText("0%")
+        self.start.setEnabled(False); self.pause.setEnabled(True); self.cancel.setEnabled(True); self.attempts.setEnabled(False); self.reset_settings.setEnabled(False)
         self.log.emit(f"开始扫描 {len(entries)} 个待处理录像"); self.thread.start()
 
     @Slot(dict)
     def on_progress(self, p: dict) -> None:
-        ratio = p["ratio"]; self.video_progress.setValue(round(ratio * 100))
+        ratio = p["ratio"]; video_value = round(ratio * 100); self.video_progress.setValue(video_value); self.video_percent.setText(f"{video_value}%")
         total = self.collector.metadata.total if self.collector.metadata else 0
-        collected = len(self.collector.chunks); self.chunk_progress.setValue(round(collected * 100 / total) if total else 0)
+        collected = len(self.collector.chunks); chunk_value = round(collected * 100 / total) if total else 0; self.chunk_progress.setValue(chunk_value); self.chunk_percent.setText(f"{chunk_value}%")
         self.status.setText(f"正在扫描：{Path(p['path']).name}\n视频 {clock(p['seconds'])}/{clock(p['duration'])}（{ratio * 100:.1f}%），帧 {p['frame']}/{p['total_frames']}\n唯一分片 {collected}/{total or '?'}，本段新增 {p['added']}，重复 {p['duplicates']}，二维码 {p['decoded']}，CRC 错误 {p['crc_errors']}，其他文件 {p['foreign']}\n已运行 {clock(time.monotonic() - self.started_at)}，本段预计剩余 {clock(p['eta'])}")
         for row, path in enumerate(self.paths):
             if os.path.normcase(path) == os.path.normcase(p["path"]):
@@ -285,6 +300,7 @@ class RecoverPage(QWidget):
         if index < self.table.rowCount():
             status = result.get("status", "扫描完成")
             self.table.item(index, 1).setText(status); self.table.item(index, 2).setText("100%" if status == "扫描完成" else "—"); self.table.item(index, 3).setText(str(result["added"]))
+            if status == "扫描完成": self.video_progress.setValue(100); self.video_percent.setText("100%")
         self.log.emit(f"录像扫描完成：{result['name']}，新增 {result['added']}，重复 {result['duplicates']}")
         self._auto_save()
 
@@ -308,7 +324,7 @@ class RecoverPage(QWidget):
     @Slot()
     def cleanup_thread(self) -> None:
         self.thread.deleteLater(); self.thread = None; self.worker = None
-        self.start.setEnabled(bool(self.paths)); self.pause.setEnabled(False); self.cancel.setEnabled(False); self.attempts.setEnabled(True); self.pause.setText("暂停")
+        self.start.setEnabled(bool(self.paths)); self.pause.setEnabled(False); self.cancel.setEnabled(False); self.attempts.setEnabled(True); self.reset_settings.setEnabled(True); self.pause.setText("暂停")
 
     def toggle_pause(self) -> None:
         if not self.worker: return
@@ -339,7 +355,7 @@ class RecoverPage(QWidget):
         if not path: return
         try:
             self.collector = ChunkCollector(load_state(path)); self.state_path = path
-            meta = self.collector.metadata; self.chunk_progress.setValue(round(len(self.collector.chunks) * 100 / meta.total) if meta else 0)
+            meta = self.collector.metadata; chunk_value = round(len(self.collector.chunks) * 100 / meta.total) if meta else 0; self.chunk_progress.setValue(chunk_value); self.chunk_percent.setText(f"{chunk_value}%")
             self.status.setText(f"状态已加载：{meta.filename if meta else '空任务'}，已有 {len(self.collector.chunks)}/{meta.total if meta else '?'} 个分片")
             self.restore.setEnabled(self.collector.complete); self.log.emit(f"已加载恢复状态：{path}")
         except StateError as exc: QMessageBox.critical(self, "状态文件无效", str(exc))
@@ -376,7 +392,7 @@ class RecoverPage(QWidget):
 
 class MainWindow(QMainWindow):
     def __init__(self):
-        super().__init__(); self.setWindowTitle("LumaBridge 光码传输 1.0"); self.resize(1080, 740); self.setMinimumSize(940, 650)
+        super().__init__(); self.setWindowTitle("LumaBridge 光码传输 1.0.1"); self.resize(1080, 740); self.setMinimumSize(940, 650)
         self.dark_mode = False; self.setStyleSheet(LIGHT_STYLESHEET)
         central = QWidget(); central.setObjectName("appRoot"); shell = QHBoxLayout(central); shell.setContentsMargins(0, 0, 0, 0); shell.setSpacing(0)
 
