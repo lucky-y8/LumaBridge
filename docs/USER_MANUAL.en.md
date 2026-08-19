@@ -17,7 +17,7 @@ The Codex-style light theme is enabled by default. Use **Switch to Dark Mode** a
 
 ## 2. Before you begin
 
-- On Windows, keep `LumaBridge-v1.0.1.exe` and the `_internal` directory together.
+- On Windows, keep `LumaBridge.exe` and the `_internal` directory together.
 - Ensure the sending monitor can display the entire QR code without scaling or cropping.
 - Ensure the phone has enough free storage for two playback loops.
 - Disable beautification filters and avoid messaging-app recompression.

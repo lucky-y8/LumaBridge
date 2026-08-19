@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
-$AppName = "LumaBridge-v1.0.1"
+$AppName = "LumaBridge"
 Set-Location $ProjectRoot
 
 python -m pytest -q

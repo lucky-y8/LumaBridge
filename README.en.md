@@ -4,6 +4,42 @@
 
 LumaBridge transfers a file between isolated computers by displaying a looping QR-code stream and scanning a phone recording. The application is designed for environments where networking, Wi-Fi, Bluetooth, and USB are unavailable or prohibited.
 
+## Interface preview
+
+| Send File | Recover File |
+| --- | --- |
+| ![LumaBridge Send File interface](docs/images/send.png) | ![LumaBridge Recover File interface](docs/images/recover.png) |
+
+## Use cases
+
+LumaBridge is intended for situations where two devices have no network, Bluetooth, or usable USB connection, but data can still be carried through a screen and a phone camera. Examples include:
+
+- An offline computer cannot connect to the internet or a local network.
+- Wi-Fi, Ethernet, Bluetooth, or USB hardware is unavailable or damaged.
+- A small log, configuration, or installer file must enter or leave an isolated test environment.
+- A temporary device lacks a compatible data interface.
+- Installing a phone application is impractical, so only the standard camera is available.
+- QR chunks must be collected across several recordings and restored later on another computer.
+
+LumaBridge is best suited to small files ranging from a few KB to a few MB. QR playback and recording time increase significantly for large files; prefer a storage drive, local network, or another high-speed transfer method when one is available.
+
+### Example
+
+An offline Windows 11 computer cannot access a network and its USB ports are unavailable. A compressed archive of about 600 KB must be transferred to another computer.
+
+1. Open LumaBridge on the offline computer and select **Send File**.
+2. Select the archive and play the dynamic QR stream using Standard mode.
+3. Record two complete loops with the phone held horizontally.
+4. Take the recording to the other computer and open **Recover File** in LumaBridge.
+5. Add the phone recording and start scanning.
+6. LumaBridge recognizes, deduplicates, and collects QR chunks automatically.
+7. After every chunk is collected, LumaBridge restores the original file and verifies its SHA-256 digest.
+8. Use the restored archive only after the application reports successful recovery.
+
+If the first recording is missing some chunks, save the recovery state, record an additional video, and continue scanning without starting over.
+
+> Transfer only data that you own or are explicitly authorized to handle, and follow your organization’s security policies. Nearby cameras can read the QR display, so LumaBridge does not provide confidentiality by default.
+
 ## Highlights
 
 - Unified PySide6 desktop UI for sending and recovery.
@@ -23,7 +59,7 @@ LumaBridge transfers a file between isolated computers by displaying a looping Q
 
 ### Windows portable build
 
-Open `LumaBridge-v1.0.1.exe` inside the complete release directory. Keep the `_internal` directory next to the executable.
+Open `LumaBridge.exe` inside the complete release directory. Keep the `_internal` directory next to the executable.
 
 The application opens in the Codex-style light theme. Use **Switch to Dark Mode** in the sidebar whenever you prefer the dark palette.
 
@@ -68,7 +104,7 @@ chmod +x scripts/build_linux.sh
 ./scripts/build_linux.sh
 ```
 
-PyInstaller artifacts cannot be reused across operating systems. See [KNOWN_ISSUES.md](KNOWN_ISSUES.md), [LICENSES.md](LICENSES.md), and the original [software requirements](动态二维码离线文件传输软件需求文档.md).
+PyInstaller artifacts cannot be reused across operating systems. See [KNOWN_ISSUES.md](KNOWN_ISSUES.md) and [LICENSES.md](LICENSES.md).
 
 ## Architecture
 

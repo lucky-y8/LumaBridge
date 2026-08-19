@@ -59,8 +59,8 @@ def test_progress_percent_is_separate_from_bar(app):
     page = RecoverPage()
     assert not page.video_progress.isTextVisible()
     assert not page.chunk_progress.isTextVisible()
-    assert page.video_percent.text() == "0%"
-    assert page.chunk_percent.text() == "0%"
+    assert page.video_percent.text() == "0 %"
+    assert page.chunk_percent.text() == "0 %"
     assert "color: transparent" not in APP_STYLESHEET
     page.close()
 

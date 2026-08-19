@@ -227,8 +227,8 @@ class RecoverPage(QWidget):
         controls.addWidget(QLabel("识别频率")); controls.addWidget(self.attempts); controls.addWidget(self.reset_settings); controls.addStretch(); controls.addWidget(self.start); controls.addWidget(self.pause); controls.addWidget(self.cancel); root.addLayout(controls)
         progress_card = QFrame(); progress_card.setObjectName("card"); progress_box = QVBoxLayout(progress_card); progress_box.setContentsMargins(16, 11, 16, 12); progress_box.setSpacing(6)
         self.video_progress = QProgressBar(); self.chunk_progress = QProgressBar(); self.video_progress.setTextVisible(False); self.chunk_progress.setTextVisible(False)
-        self.video_percent = QLabel("0%"); self.chunk_percent = QLabel("0%"); self.video_percent.setObjectName("progressPercent"); self.chunk_percent.setObjectName("progressPercent")
-        for percent in (self.video_percent, self.chunk_percent): percent.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter); percent.setFixedWidth(48)
+        self.video_percent = QLabel("0 %"); self.chunk_percent = QLabel("0 %"); self.video_percent.setObjectName("progressPercent"); self.chunk_percent.setObjectName("progressPercent")
+        for percent in (self.video_percent, self.chunk_percent): percent.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter); percent.setFixedWidth(64)
         video_label = QLabel("当前视频扫描进度"); video_label.setObjectName("muted"); chunk_label = QLabel("唯一分片收集进度"); chunk_label.setObjectName("muted")
         video_row = QHBoxLayout(); video_row.setSpacing(10); video_row.addWidget(self.video_progress, 1); video_row.addWidget(self.video_percent)
         chunk_row = QHBoxLayout(); chunk_row.setSpacing(10); chunk_row.addWidget(self.chunk_progress, 1); chunk_row.addWidget(self.chunk_percent)
@@ -281,15 +281,15 @@ class RecoverPage(QWidget):
         self.worker.moveToThread(self.thread); self.thread.started.connect(self.worker.run); self.worker.progress.connect(self.on_progress)
         self.worker.video_done.connect(self.on_video_done); self.worker.finished.connect(self.on_finished); self.worker.failed.connect(self.on_failed)
         self.worker.finished.connect(self.thread.quit); self.worker.failed.connect(self.thread.quit); self.thread.finished.connect(self.cleanup_thread)
-        self.video_progress.setValue(0); self.video_percent.setText("0%")
+        self.video_progress.setValue(0); self.video_percent.setText("0 %")
         self.start.setEnabled(False); self.pause.setEnabled(True); self.cancel.setEnabled(True); self.attempts.setEnabled(False); self.reset_settings.setEnabled(False)
         self.log.emit(f"开始扫描 {len(entries)} 个待处理录像"); self.thread.start()
 
     @Slot(dict)
     def on_progress(self, p: dict) -> None:
-        ratio = p["ratio"]; video_value = round(ratio * 100); self.video_progress.setValue(video_value); self.video_percent.setText(f"{video_value}%")
+        ratio = p["ratio"]; video_value = round(ratio * 100); self.video_progress.setValue(video_value); self.video_percent.setText(f"{video_value} %")
         total = self.collector.metadata.total if self.collector.metadata else 0
-        collected = len(self.collector.chunks); chunk_value = round(collected * 100 / total) if total else 0; self.chunk_progress.setValue(chunk_value); self.chunk_percent.setText(f"{chunk_value}%")
+        collected = len(self.collector.chunks); chunk_value = round(collected * 100 / total) if total else 0; self.chunk_progress.setValue(chunk_value); self.chunk_percent.setText(f"{chunk_value} %")
         self.status.setText(f"正在扫描：{Path(p['path']).name}\n视频 {clock(p['seconds'])}/{clock(p['duration'])}（{ratio * 100:.1f}%），帧 {p['frame']}/{p['total_frames']}\n唯一分片 {collected}/{total or '?'}，本段新增 {p['added']}，重复 {p['duplicates']}，二维码 {p['decoded']}，CRC 错误 {p['crc_errors']}，其他文件 {p['foreign']}\n已运行 {clock(time.monotonic() - self.started_at)}，本段预计剩余 {clock(p['eta'])}")
         for row, path in enumerate(self.paths):
             if os.path.normcase(path) == os.path.normcase(p["path"]):
@@ -300,7 +300,7 @@ class RecoverPage(QWidget):
         if index < self.table.rowCount():
             status = result.get("status", "扫描完成")
             self.table.item(index, 1).setText(status); self.table.item(index, 2).setText("100%" if status == "扫描完成" else "—"); self.table.item(index, 3).setText(str(result["added"]))
-            if status == "扫描完成": self.video_progress.setValue(100); self.video_percent.setText("100%")
+            if status == "扫描完成": self.video_progress.setValue(100); self.video_percent.setText("100 %")
         self.log.emit(f"录像扫描完成：{result['name']}，新增 {result['added']}，重复 {result['duplicates']}")
         self._auto_save()
 
@@ -355,7 +355,7 @@ class RecoverPage(QWidget):
         if not path: return
         try:
             self.collector = ChunkCollector(load_state(path)); self.state_path = path
-            meta = self.collector.metadata; chunk_value = round(len(self.collector.chunks) * 100 / meta.total) if meta else 0; self.chunk_progress.setValue(chunk_value); self.chunk_percent.setText(f"{chunk_value}%")
+            meta = self.collector.metadata; chunk_value = round(len(self.collector.chunks) * 100 / meta.total) if meta else 0; self.chunk_progress.setValue(chunk_value); self.chunk_percent.setText(f"{chunk_value} %")
             self.status.setText(f"状态已加载：{meta.filename if meta else '空任务'}，已有 {len(self.collector.chunks)}/{meta.total if meta else '?'} 个分片")
             self.restore.setEnabled(self.collector.complete); self.log.emit(f"已加载恢复状态：{path}")
         except StateError as exc: QMessageBox.critical(self, "状态文件无效", str(exc))

@@ -6,6 +6,12 @@
 
 LumaBridge is a fully offline desktop application that transfers files through a stream of QR codes and a phone recording. It uses no network, Wi-Fi, Bluetooth, account, telemetry, or cloud service.
 
+## Interface / 界面
+
+| Send / 发送文件 | Recover / 恢复文件 |
+| --- | --- |
+| ![LumaBridge send interface](docs/images/send.png) | ![LumaBridge recover interface](docs/images/recover.png) |
+
 - [English README](README.en.md)
 - [English User Manual](docs/USER_MANUAL.en.md)
 - [Third-party licenses](LICENSES.md)
